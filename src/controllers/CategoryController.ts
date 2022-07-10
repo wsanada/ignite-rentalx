@@ -1,33 +1,54 @@
 import { Request, Response } from "express";
-import { CategoryRepository } from "../repositories/implementations/CategoryRepository";
+import { container } from "tsyringe";
+import { RepositoryNotTreeError, TreeRepositoryNotSupportedError } from "typeorm";
 import { CategoryService } from "../services/CategoryService";
 
 class CategoryController {
-    constructor(private service: CategoryService) { }
+    async create(request: Request, response: Response): Promise<Response> {
+        try {
+            const service = container.resolve(CategoryService)
+            const { name, description } = request.body
 
-    create(request: Request, response: Response): Response {
-        const { name, description } = request.body
-        this.service.create({ name, description })
-        return response.status(201).send()
+            await service.create({ name, description })
+
+            return response.status(201).send()
+        } catch (e) {
+            return response.status(400).json({ error: e })
+        }
     }
-    getAll(request: Request, response: Response): Response {
-        const list = this.service.getAll()
-        return response.json(list)
+    async getAll(request: Request, response: Response): Promise<Response> {
+        try {
+            const service = container.resolve(CategoryService)
+            const list = await service.getAll()
+            return response.json(list)
+        } catch (e) {
+            return response.status(404).json({ error: e })
+        }
     }
-    findByName(request: Request, response: Response): Response {
-        const { name } = request.body
-        const item = this.service.findByName(name)
-        return response.json(item)
+    async findByName(request: Request, response: Response): Promise<Response> {
+        try {
+            const service = container.resolve(CategoryService)
+            const { name } = request.body
+
+            const item = await service.findByName(name)
+
+            return response.json(item)
+        } catch (e) {
+            return response.status(404).json({ error: e })
+        }
     }
-    import(request: Request, response: Response): Response {
-        const { file } = request
-        this.service.import(file)
-        return response.send()
+    async import(request: Request, response: Response): Promise<Response> {
+        try {
+            const service = container.resolve(CategoryService)
+            const { file } = request
+
+            await service.import(file)
+
+            return response.send()
+        } catch (e) {
+            return response.status(404).json({ error: e })
+        }
     }
 }
 
-const repository = new CategoryRepository()
-const service = new CategoryService(repository)
-const categoryController = new CategoryController(service)
-
-export { categoryController }
+export { CategoryController }

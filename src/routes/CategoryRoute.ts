@@ -1,12 +1,13 @@
 import { Router } from "express"
 import multer from "multer"
-import { categoryController as controller } from "../controllers/CategoryController"
+import { CategoryController } from "../controllers/CategoryController"
 
 const router = Router()
 const upload = multer({ dest: "./tmp" })
+const controller = new CategoryController()
 
-router.post("/", (request, response) => controller.create(request, response))
-router.get("/", (request, response) => controller.getAll(request, response))
-router.post("/import", upload.single("file"), (request, response) => controller.import(request, response))
+router.post("/", controller.create)
+router.get("/", controller.getAll)
+router.post("/import", upload.single("file"), controller.import)
 
 export { router as categoryRoute }

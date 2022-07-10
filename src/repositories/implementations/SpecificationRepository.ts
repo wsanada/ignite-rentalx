@@ -1,28 +1,25 @@
-import { Specification } from "../../model/Specification"
+import { CustomRepositoryCannotInheritRepositoryError, getRepository, Repository } from "typeorm"
+import { Specification } from "../../entities/Specification"
 import { ISpecificationRepository, ICreateSpecificationDTO } from "../interfaces/ISpecificationRepository"
 
 class SpecificationRepository implements ISpecificationRepository {
-    private all: Specification[]
+    private repository: Repository<Specification>
 
     constructor() {
-        this.all = []
+        this.repository = getRepository("specification")
     }
 
-    create({ name, description }: ICreateSpecificationDTO): void {
-        const item: Specification = new Specification()
-        Object.assign(item,
-            {
-                name,
-                description,
-            })
+    async create({ name, description }: ICreateSpecificationDTO): Promise<void> {
+        const item = this.repository.create({ name, description })
 
-        this.all.push(item)
+        await this.repository.save(item)
     }
-    getAll(): Specification[] {
-        return this.all
+    async getAll(): Promise<Specification[]> {
+        const list = await this.repository.find()
+        return list
     }
-    findByName(name: string): Specification {
-        const item = this.all.find(a => a.name === name)
+    async findByName(name: string): Promise<Specification> {
+        const item = this.repository.findOne({ name })
         return item
     }
 }

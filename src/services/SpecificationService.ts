@@ -1,4 +1,5 @@
-import { Category } from "../model/Category"
+import { inject, injectable } from "tsyringe"
+import { Category } from "../entities/Category"
 import { SpecificationRepository } from "../repositories/implementations/SpecificationRepository"
 
 interface ISpecification {
@@ -6,20 +7,22 @@ interface ISpecification {
     description: string
 }
 
+@injectable()
 class SpecificationService {
-    constructor(private repository: SpecificationRepository) { }
-    create({ name, description }: ISpecification): void {
-        if (this.repository.findByName(name))
+    constructor(@inject("SpecificationRepository") private repository: SpecificationRepository) { }
+
+    async create({ name, description }: ISpecification): Promise<void> {
+        if (await this.repository.findByName(name))
             throw new Error("Especificação já cadastrada.")
 
-        this.repository.create({ name, description })
+        await this.repository.create({ name, description })
     }
-    getAll(): Category[] {
-        const list = this.repository.getAll()
+    async getAll(): Promise<Category[]> {
+        const list = await this.repository.getAll()
         return list
     }
-    findByName(name: string): Category {
-        const item = this.repository.findByName(name)
+    async findByName(name: string): Promise<Category> {
+        const item = await this.repository.findByName(name)
         return item
     }
 }

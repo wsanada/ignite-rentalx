@@ -1,0 +1,17 @@
+{
+  "type": "postgres",
+  "host": "db",
+  "port": 5432,
+  "database": "rentx",
+  "username": "docker",
+  "password": "brasil#123!",
+  "migrations": [
+    "./src/database/migrations/*.ts"
+  ],
+  "cli": {
+    "migrationsDir": "./src/database/migrations"
+  },
+  "entities": [
+    "./src/entities/*.ts"
+  ]
+}

@@ -1,5 +1,7 @@
+import "./database"
+import "./shared/container"
 import express from "express"
-import { router } from "."
+import { router } from "./routes"
 import swaggerUi from "swagger-ui-express"
 import swagger from "./swagger.json"
 
@@ -10,4 +12,4 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swagger))
 app.use(router)
 
 const message = "Servidor montado na porta 3333"
-app.listen(3333, () => console.log(`--[${message}]--` + '-'.repeat(80 - 6 - message.length)))
+app.listen(3333, "0.0.0.0", () => console.log(`--[${message}]--` + '-'.repeat(80 - 6 - message.length)))

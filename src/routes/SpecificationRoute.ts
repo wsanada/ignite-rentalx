@@ -1,9 +1,10 @@
 import { Router } from "express"
-import { specificationController as controller } from "../controllers/SpecificationController"
+import { SpecificationController } from "../controllers/SpecificationController"
 
 const router = Router()
+const controller = new SpecificationController()
 
-router.post("/", (request, response) => controller.create(request, response))
-router.get("/", (request, response) => controller.getAll(request, response))
+router.post("/", controller.create)
+router.get("/", controller.getAll)
 
 export { router as specificationRoute }
