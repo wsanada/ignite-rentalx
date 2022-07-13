@@ -1,4 +1,5 @@
 import { inject, injectable } from "tsyringe"
+import { AppError } from "../../../infra/AppError"
 import { Category } from "../entities/Category"
 import { SpecificationRepository } from "../repositories/implementations/SpecificationRepository"
 
@@ -13,7 +14,7 @@ class SpecificationService {
 
     async create({ name, description }: ISpecification): Promise<void> {
         if (await this.repository.findByName(name))
-            throw new Error("Especificação já cadastrada.")
+            throw new AppError("Especificação já cadastrada.")
 
         await this.repository.create({ name, description })
     }

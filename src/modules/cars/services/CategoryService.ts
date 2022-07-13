@@ -3,6 +3,7 @@ import { Category } from "../entities/Category"
 import { CategoryRepository } from "../repositories/implementations/CategoryRepository"
 import fs from "fs"
 import { parse } from "csv-parse"
+import { AppError } from "../../../infra/AppError"
 
 interface ICategory {
     name: string
@@ -35,7 +36,7 @@ class CategoryService {
 
     async create({ name, description }: ICategory): Promise<void> {
         if (await this.repository.findByName(name))
-            throw new Error("Categoria já cadastrada.")
+            throw new AppError("Categoria já cadastrada.")
 
         await this.repository.create({ name, description })
     }

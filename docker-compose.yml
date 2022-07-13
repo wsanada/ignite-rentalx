@@ -1,19 +1,21 @@
-version: "3.7"
+version: "3.9"
 
 services:
   db:
     image: postgres
     container_name: rentx-db
     restart: always
-    tty: true
+#    tty: true
     volumes:
-      - pgdata:/data/postgres
+      - pgdata:/var/lib/postgresql/data
+      - type: tmpfs
+        target: /dev/shm
     environment:
       - POSTGRES_DB=rentx
       - POSTGRES_USER=docker
       - POSTGRES_PASSWORD=brasil#123!
     networks:
-      - rentx-net
+      - net-rentx
     ports:
       - 5432:5432
   app:
@@ -23,19 +25,23 @@ services:
     volumes:
       - .:/usr/app
     networks:
-      - rentx-net
+      - net-rentx
     ports:
       - 3333:3333
       - 9229:9229
+    # links:
+    #   - db
     depends_on:
       - db
 
 networks:
-  rentx-net:
+  net-rentx:
+    name: net-rentx
     driver: bridge
 
 volumes:
   pgdata:
+    name: vol-rentx
     driver: local
 
 #/* sobe os containers e libera o terminal */
